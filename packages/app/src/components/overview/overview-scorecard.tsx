@@ -1,7 +1,6 @@
 import {
   OVERVIEW_DEFAULT_REFERENCE_HARDWARE,
   OVERVIEW_HARDWARE,
-  OVERVIEW_TIERS,
   overviewHardwareLabel,
   type OverviewComparisonMode,
   type OverviewEngineScope,
@@ -18,13 +17,13 @@ import {
   detailHref,
   overviewEngineScopeHref,
   overviewHref,
-  overviewTierHref,
 } from '@/lib/overview-links';
 
 import { OverviewDetailLink } from './overview-detail-link';
 import { OverviewHistoryDetailLink } from './overview-history-detail-link';
 import { OverviewNavLink } from './overview-nav-link';
 import { OverviewReferenceSelect } from './overview-reference-select';
+import { OverviewTierSlider } from './overview-tier-slider';
 
 export type OverviewLocale = 'en' | 'zh';
 
@@ -803,8 +802,7 @@ export function MobileOverviewList({
   );
 }
 
-/** Every option remains a copyable server-rendered URL; ordinary clicks use a
- *  soft App Router transition and the displayed tier is never a self-link. */
+/** The six benchmarked service levels are exposed as discrete slider stops. */
 export function OverviewTierSwitcher({
   tier,
   engineScope,
@@ -822,46 +820,17 @@ export function OverviewTierSwitcher({
   locale: OverviewLocale;
   strings: OverviewStrings;
 }) {
-  const optionClass = 'inline-flex min-h-11 items-center px-3 tabular-nums';
   return (
-    <nav
-      data-testid="overview-tier-switcher"
-      aria-label={strings.tierNavLabel}
-      className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs"
-    >
-      <span className="text-muted-foreground">{strings.tierNavLabel}</span>
-      <div className="flex divide-x divide-border/60 overflow-hidden rounded-md border border-border/60">
-        {OVERVIEW_TIERS.map((option) =>
-          option === tier ? (
-            <span
-              key={option}
-              aria-current="page"
-              className={`${optionClass} bg-foreground font-semibold text-background`}
-            >
-              {option}
-            </span>
-          ) : (
-            <OverviewNavLink
-              key={option}
-              href={overviewTierHref(
-                locale,
-                option,
-                engineScope,
-                comparisonMode,
-                referenceHardware,
-                modelScope,
-              )}
-              analytics={{ control: 'tier', value: String(option) }}
-              searchKeys={['tier']}
-              className={`${optionClass} text-muted-foreground transition-colors hover:bg-muted hover:text-foreground`}
-            >
-              {option}
-            </OverviewNavLink>
-          ),
-        )}
-      </div>
-      <span className="text-muted-foreground">{strings.tierUnit}</span>
-    </nav>
+    <OverviewTierSlider
+      tier={tier}
+      engineScope={engineScope}
+      comparisonMode={comparisonMode}
+      referenceHardware={referenceHardware}
+      modelScope={modelScope}
+      locale={locale}
+      label={strings.tierNavLabel}
+      unit={strings.tierUnit}
+    />
   );
 }
 
